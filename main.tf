@@ -38,4 +38,11 @@ resource "aws_ami_from_instance" "ami" {
   depends_on = [null_resource.ansible]
   name               = "golden-ami ${formatdate("DD-MM-YY",timestamp())}"
   source_instance_id = aws_instance.ami.id
+
+  lifecycle {
+    ignore_changes = [
+      name
+      ##only for one Images in a day,if we need second AMI code needs to be chnaged
+    ]
+  }
 }
