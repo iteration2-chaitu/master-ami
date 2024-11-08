@@ -1,0 +1,47 @@
+format_version: 10
+pipelines:
+  master-ami:
+    group: Terraform
+    materials:
+      git-da613e5:
+        git: https://github.com/iteration2-chaitu/master-ami.git
+        shallow_clone: false
+        auto_update: true
+        branch: main
+    secure_variables:
+      TF_VAR_vault_token: AES:AEjuqp7+mej6N3TGtiHsTw==:mwRUYFADhRy4tLV4O3qXUHwyR94Rx7kY919+lE3UjPQ=
+    stages:
+      - DEV:
+          fetch_materials: true
+          environment_variables:
+            env: dev
+          approval:
+            type: manual
+          jobs:
+            terraform-apply:
+              tasks:
+                - exec: {command: terraform, arguments: [ "init" ], run_if: passed}
+                - exec: {command: terraform, arguments: [ "apply", "-auto-approve" ], run_if: passed}
+
+
+#     - PROD:
+#         fetch_materials: true
+#         environment_variables:
+#           env: prod
+#         approval:
+#           type: success
+#         jobs:
+#           terraform-apply:
+#             tasks:
+#             - exec: {command: terraform, arguments: [ "init", "-backend-config=env-prod/state.tfvars" ], run_if: passed}
+#     - PROD:
+#         fetch_materials: true
+#         environment_variables:
+#           env: prod
+#         approval:
+#           type: success
+#         jobs:
+#           terraform-apply:
+#             tasks:
+#             - exec: {command: terraform, arguments: [ "init", "-backend-config=env-prod/state.tfvars" ], run_if: passed}
+#
